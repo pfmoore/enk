@@ -1,4 +1,5 @@
 from enk.filegen import build_files
+import sys
 import stat
 import textwrap
 
@@ -87,3 +88,12 @@ def test_indented_content(tmpdir):
     build_files(defn, cwd=str(tmpdir))
     assert (tmpdir / 'foo').read() == "Line 1\n  Line 2\nLine 3\n"
 
+def test_executable(tmpdir):
+    defn = textwrap.dedent("""
+        name: foo
+        executable: yes
+    """)
+    build_files(defn, cwd=str(tmpdir))
+    if not sys.platform.startswith('win'):
+        # Executable bit is not relevant on Windows
+        assert ((tmpdir / 'foo').stat().mode & stat.S_IXUSR) != 0
