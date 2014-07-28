@@ -1,6 +1,7 @@
 import sys
 import shutil
 
+PY2_DEFAULT_TERMINAL_SIZE = 80
 last_written = 0
 
 def overwrite_line(text, newline=False):
@@ -28,7 +29,11 @@ def append_line(text):
 
 class ScreenLine:
     def __init__(self, final=""):
-        self.length, ignore = shutil.get_terminal_size()
+        try:
+            self.length, ignore = shutil.get_terminal_size()
+        except AttributeError:
+            # Python 2 has no shutil.get_terminal_size()
+            self.length = PY2_DEFAULT_TERMINAL_SIZE
         # Assume the line is dirty, so clear it on first write
         self.written = self.length - 1
         self.final = final

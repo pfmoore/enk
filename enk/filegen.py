@@ -3,6 +3,11 @@ import io
 import stat
 import yaml
 
+try:
+    unicode
+except NameError:
+    def unicode(s): return s
+
 def ensuredir(name):
     """Make sure directory name exists.
 
@@ -29,7 +34,7 @@ def build_one_file(defn, cwd=None):
         os.mkdir(filename)
         return
     with io.open(filename, 'w', encoding=defn.get('encoding', 'utf-8')) as f:
-        f.write(defn.get('content', ''))
+        f.write(unicode(defn.get('content', u'')))
     if defn.get('executable'):
         os.chmod(filename, os.stat(filename).st_mode | stat.S_IXUSR)
 

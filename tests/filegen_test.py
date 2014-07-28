@@ -3,6 +3,9 @@ import sys
 import stat
 import textwrap
 
+# Note - where definitions use non-ASCII chacaters, they need to be Unicode,
+# hence the seemingly-random scattering of u"""...""".
+
 def test_empty_file(tmpdir):
     defn = textwrap.dedent("""
         name: foo
@@ -27,6 +30,8 @@ def test_trailing_slash(tmpdir):
     assert (tmpdir / 'foo').check(dir=1)
 
 def test_set_content(tmpdir):
+    # Also tests that a Python 2 string can be used for content when it
+    # is pure ASCII.
     defn = textwrap.dedent("""
         name: foo
         content: bar
@@ -35,7 +40,7 @@ def test_set_content(tmpdir):
     assert (tmpdir / 'foo').read() == 'bar'
 
 def test_encoding(tmpdir):
-    defn = textwrap.dedent("""
+    defn = textwrap.dedent(u"""
         name: foo
         content: \xa3
         encoding: latin-1
@@ -44,7 +49,7 @@ def test_encoding(tmpdir):
     assert (tmpdir / 'foo').read() == '\xa3'
 
 def test_encoding_utf8(tmpdir):
-    defn = textwrap.dedent("""
+    defn = textwrap.dedent(u"""
         name: foo
         content: \xa3
         encoding: utf-8
@@ -53,7 +58,7 @@ def test_encoding_utf8(tmpdir):
     assert (tmpdir / 'foo').read() == '\xc2\xa3'
 
 def test_default_encoding_is_utf8(tmpdir):
-    defn = textwrap.dedent("""
+    defn = textwrap.dedent(u"""
         name: foo
         content: \xa3
     """)
@@ -61,7 +66,7 @@ def test_default_encoding_is_utf8(tmpdir):
     assert (tmpdir / 'foo').read() == '\xc2\xa3'
 
 def test_non_ascii_filename(tmpdir):
-    defn = textwrap.dedent("""
+    defn = textwrap.dedent(u"""
         name: foo\xa3
     """)
     build_files(defn, cwd=str(tmpdir))

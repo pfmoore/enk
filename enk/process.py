@@ -7,6 +7,16 @@ def process_lines(args, **kw):
     kw['stderr'] = STDOUT
     kw['universal_newlines'] = True
 
-    with Popen(**kw) as proc:
+    proc = Popen(**kw)
+    try:
         for line in proc.stdout:
             yield line
+    finally:
+        if proc.stdout:
+            proc.stdout.close()
+        if proc.stderr:
+            proc.stderr.close()
+        if proc.stdin:
+            proc.stdin.close()
+        # Wait for the process to terminate, to avoid zombies.
+        proc.wait()

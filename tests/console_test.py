@@ -1,4 +1,14 @@
 from enk.console import overwrite_line, append_line, ScreenLine
+import shutil
+
+def patch_termsize(monkeypatch):
+    def dummy_termsize():
+        return 10, 10
+
+    if hasattr(shutil, 'get_terminal_size'):
+        monkeypatch.setattr('shutil.get_terminal_size', dummy_termsize)
+    else:
+        monkeypatch.setattr('enk.console.PY2_DEFAULT_TERMINAL_SIZE', 10)
 
 def test_overwrite(capsys):
     # New line - no CR
@@ -25,11 +35,8 @@ def test_overwrite(capsys):
 def padding(n):
     return (" " * n) + ("\b" * n)
 
-def dummy_termsize():
-    return 10, 10
-
 def test_screenline_init(monkeypatch, capsys):
-    monkeypatch.setattr('shutil.get_terminal_size', dummy_termsize)
+    patch_termsize(monkeypatch)
     s = ScreenLine()
     s.show("")
     out, err = capsys.readouterr()
@@ -37,7 +44,7 @@ def test_screenline_init(monkeypatch, capsys):
     assert err == ""
 
 def test_screenline_write(monkeypatch, capsys):
-    monkeypatch.setattr('shutil.get_terminal_size', dummy_termsize)
+    patch_termsize(monkeypatch)
     s = ScreenLine()
     s.show("OK")
     out, err = capsys.readouterr()
@@ -45,7 +52,7 @@ def test_screenline_write(monkeypatch, capsys):
     assert err == ""
 
 def test_screenline_optimise_second_write(monkeypatch, capsys):
-    monkeypatch.setattr('shutil.get_terminal_size', dummy_termsize)
+    patch_termsize(monkeypatch)
     s = ScreenLine()
     s.show("")
     out, err = capsys.readouterr()
@@ -55,7 +62,7 @@ def test_screenline_optimise_second_write(monkeypatch, capsys):
     assert err == ""
 
 def test_screenline_toolong(monkeypatch, capsys):
-    monkeypatch.setattr('shutil.get_terminal_size', dummy_termsize)
+    patch_termsize(monkeypatch)
     s = ScreenLine()
     s.show("")
     out, err = capsys.readouterr()
@@ -65,7 +72,7 @@ def test_screenline_toolong(monkeypatch, capsys):
     assert err == ""
 
 def test_screenline_contextmgr(monkeypatch, capsys):
-    monkeypatch.setattr('shutil.get_terminal_size', dummy_termsize)
+    patch_termsize(monkeypatch)
     with ScreenLine() as s:
         s.show("Test")
     out, err = capsys.readouterr()
@@ -73,7 +80,7 @@ def test_screenline_contextmgr(monkeypatch, capsys):
     assert err == ""
 
 def test_screenline_final(monkeypatch, capsys):
-    monkeypatch.setattr('shutil.get_terminal_size', dummy_termsize)
+    patch_termsize(monkeypatch)
     with ScreenLine(final="OK") as s:
         s.show("Test")
     out, err = capsys.readouterr()
