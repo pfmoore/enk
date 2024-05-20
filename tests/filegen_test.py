@@ -46,7 +46,7 @@ def test_encoding(tmpdir):
         encoding: latin-1
     """)
     build_files(defn, cwd=str(tmpdir))
-    assert (tmpdir / 'foo').read() == '\xa3'
+    assert (tmpdir / 'foo').read_text("latin-1") == '\xa3'
 
 def test_encoding_utf8(tmpdir):
     defn = textwrap.dedent(u"""
@@ -55,7 +55,7 @@ def test_encoding_utf8(tmpdir):
         encoding: utf-8
     """)
     build_files(defn, cwd=str(tmpdir))
-    assert (tmpdir / 'foo').read() == '\xc2\xa3'
+    assert (tmpdir / 'foo').read_text("utf-8") == '\xa3'
 
 def test_default_encoding_is_utf8(tmpdir):
     defn = textwrap.dedent(u"""
@@ -63,7 +63,7 @@ def test_default_encoding_is_utf8(tmpdir):
         content: \xa3
     """)
     build_files(defn, cwd=str(tmpdir))
-    assert (tmpdir / 'foo').read() == '\xc2\xa3'
+    assert (tmpdir / 'foo').read_text("utf-8") == '\xa3'
 
 def test_non_ascii_filename(tmpdir):
     defn = textwrap.dedent(u"""

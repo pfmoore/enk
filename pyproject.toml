@@ -26,6 +26,7 @@ authors = [
 ]
 keywords = ["utilities", "development"]
 requires-python = ">=3.8"
+dependencies = ["pyyaml"]
 
 [project.urls]
 Homepage = "https://github.com/pfmoore/enk"
