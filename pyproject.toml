@@ -1,6 +1,6 @@
 [project]
 name = "enk"
-version = "0.2"
+version = "0.3"
 description = "Various Python utilities."
 readme = "README.md"
 license = { text = "MIT" }
