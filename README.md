@@ -1,5 +1,4 @@
-Various Python utilities
-========================
+# Various Python utilities
 
 This is my personal utilities package.
 
